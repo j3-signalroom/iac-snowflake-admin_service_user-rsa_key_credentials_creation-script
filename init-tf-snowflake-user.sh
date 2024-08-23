@@ -149,6 +149,10 @@ then
     rm private_key.p8
     rm public_key.pub
 else
+    # Drop the Snowflake service account user
+    # NOTE: This user will only be dropped if another ACCOUNTADMIN user exist
+    snow sql -q "DROP USER IF EXISTS ${snowflake_user};" --temporary-connection --role ACCOUNTADMIN
+
     # Force the delete of the AWS Secret
     aws secretsmanager delete-secret --secret-id '/snowflake_resource' --force-delete-without-recovery || true
     aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key' --force-delete-without-recovery || true
