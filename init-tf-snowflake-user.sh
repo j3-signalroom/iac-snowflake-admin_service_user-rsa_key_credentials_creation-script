@@ -143,6 +143,7 @@ then
 
     # Create or Update the AWS Secret
     aws secretsmanager create-secret --name '/snowflake_resource' --secret-string "{\"account\":\"$snowflake_account\",\"authenticator\":\"JWT\",\"user\":\"$snowflake_user\",\"rsa_public_key\":\"`cat public_key.pub`\"}"
+    aws secretsmanager create-secret --name '/snowflake_resource/rsa_private_key' --secret-string file://private_key.p8
 else
     # Force the delete of the AWS Secret
     aws secretsmanager delete-secret --secret-id '/snowflake_resource' --force-delete-without-recovery || true
