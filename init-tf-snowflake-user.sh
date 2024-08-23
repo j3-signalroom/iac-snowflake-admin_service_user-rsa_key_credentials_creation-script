@@ -125,7 +125,6 @@ export SNOWFLAKE_WAREHOUSE=${snowflake_warehouse}
 aws sso login $AWS_PROFILE
 eval $(aws2-wrap $AWS_PROFILE --export)
 export AWS_REGION=$(aws configure get sso_region $AWS_PROFILE)
-export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
 #
 if [ "$create_action" = true ]
