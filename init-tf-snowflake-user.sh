@@ -126,6 +126,15 @@ aws sso login $AWS_PROFILE
 eval $(aws2-wrap $AWS_PROFILE --export)
 export AWS_REGION=$(aws configure get sso_region $AWS_PROFILE)
 
+
+# Function to handle the user creation error
+user_updater_handler() {
+    snow sql -q "ALTER USER ${snowflake_user} SET RSA_PUBLIC_KEY=\"`cat public_key.pub`\";" --temporary-connection --role ACCOUNTADMIN
+}
+
+# Set the trap to catch user creaation error
+trap 'user_updater_handler' ERR
+
 #
 if [ "$create_action" = true ]
 then
