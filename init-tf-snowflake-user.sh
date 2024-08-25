@@ -2,11 +2,12 @@
 
 #
 # *** Script Syntax ***
-# ./init-tf-snowflake-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> 
-#                                               --snowflake_account=<SNOWFLAKE_ACCOUNT> 
-#                                               --snowflake_user=<SNOWFLAKE_USER> 
-#                                               --snowflake_password=<SNOWFLAKE_PASSWORD> 
-#                                               --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>
+# ./init-tf-snowflake-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
+#                                               --snowflake_account=<SNOWFLAKE_ACCOUNT> \
+#                                               --snowflake_user=<SNOWFLAKE_USER> \
+#                                               --snowflake_password=<SNOWFLAKE_PASSWORD> \
+#                                               --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
+#                                               --tf_snowflake_user=<TF_SNOWFLAKE_USER>
 #
 #
 
@@ -20,7 +21,7 @@ case $1 in
     echo
     echo "(Error Message 001)  You did not specify one of the commands: create | delete."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0` <create | delete> --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>"
+    echo "Usage:  Require all four arguments ---> `basename $0` <create | delete> --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
     ;;
@@ -46,6 +47,9 @@ do
         *"--snowflake_warehouse="*)
             arg_length=22
             snowflake_warehouse=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
+        *"--tf_snowflake_user="*)
+            arg_length=20
+            tf_snowflake_user=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
     esac
 done
 
@@ -55,7 +59,7 @@ then
     echo
     echo "(Error Message 002)  You did not include the proper use of the --profile=<AWS_SSO_SSO_PROFILE_NAME> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -66,7 +70,7 @@ then
     echo
     echo "(Error Message 003)  You did not include the proper use of the --snowflake_account=<SNOWFLAKE_ACCOUNT> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -77,7 +81,7 @@ then
     echo
     echo "(Error Message 004)  You did not include the proper use of the --snowflake_user=<SNOWFLAKE_USER> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -88,7 +92,7 @@ then
     echo
     echo "(Error Message 005)  You did not include the proper use of the --snowflake_password=<SNOWFLAKE_PASSWORD> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -99,7 +103,18 @@ then
     echo
     echo "(Error Message 006)  You did not include the proper use of the --snowflake_user=<SNOWFLAKE_WAREHOUSE> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
+    echo
+    exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
+fi
+
+# Check required --snowflake_warehouse argument was supplied
+if [ -z $tf_snowflake_user ]
+then
+    echo
+    echo "(Error Message 007)  You did not include the proper use of the --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE> argument in the call."
+    echo
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account=<SNOWFLAKE_ACCOUNT> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --tf_snowflake_user=<SNOWFLAKE_WAREHOUSE>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -119,7 +134,7 @@ export AWS_REGION=$(aws configure get sso_region $AWS_PROFILE)
 
 # Function to handle the user creation error
 user_updater_handler() {
-    snow sql -q "ALTER USER ${snowflake_user} SET RSA_PUBLIC_KEY=\"`cat public_key.pub`\";" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "ALTER USER ${tf_snowflake_user} SET RSA_PUBLIC_KEY=\"`cat public_key.pub`\";" --temporary-connection --role ACCOUNTADMIN
 }
 
 # Set the trap to catch user creaation error
@@ -135,12 +150,12 @@ then
     # Create the Snowflake service account user and grant it access
     # to the SYSADMIN and SECURITYADMIN roles needed for account
     # management
-    snow sql -q "CREATE USER ${snowflake_user} RSA_PUBLIC_KEY=\"`cat public_key.pub`\" DEFAULT_ROLE=PUBLIC MUST_CHANGE_PASSWORD=FALSE;" --temporary-connection --role ACCOUNTADMIN
-    snow sql -q "GRANT ROLE SYSADMIN TO USER ${snowflake_user};" --temporary-connection --role ACCOUNTADMIN
-    snow sql -q "GRANT ROLE SECURITYADMIN TO USER ${snowflake_user};" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "CREATE USER ${tf_snowflake_user} RSA_PUBLIC_KEY=\"`cat public_key.pub`\" DEFAULT_ROLE=PUBLIC MUST_CHANGE_PASSWORD=FALSE;" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "GRANT ROLE SYSADMIN TO USER ${tf_snowflake_user};" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "GRANT ROLE SECURITYADMIN TO USER ${tf_snowflake_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Create or Update the AWS Secret
-    aws secretsmanager create-secret --name '/snowflake_resource' --secret-string "{\"account\":\"$snowflake_account\",\"authenticator\":\"JWT\",\"user\":\"$snowflake_user\",\"rsa_public_key\":\"`cat public_key.pub`\"}"
+    aws secretsmanager create-secret --name '/snowflake_resource' --secret-string "{\"account\":\"$snowflake_account\",\"tf_user\":\"$tf_snowflake_user\",\"rsa_public_key\":\"`cat public_key.pub`\"}"
     aws secretsmanager create-secret --name '/snowflake_resource/rsa_private_key' --secret-string file://private_key.p8
 
     # Remove the RSA Keys
@@ -148,7 +163,6 @@ then
     rm public_key.pub
 else
     # Drop the Snowflake service account user
-    # NOTE: This user will only be dropped if another ACCOUNTADMIN user exist
     snow sql -q "DROP USER IF EXISTS ${snowflake_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Force the delete of the AWS Secret
