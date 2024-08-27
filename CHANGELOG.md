@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.00.000] - 2024-08-27
+### Added
+- Now create two RSA key pairs per Snowflake user.
+
+### Changed
+- Updated the `README.md` to be more instructive.
+
 ## [0.04.00.000] - 2024-08-24
 ### Added
 - Describe the script execution in detail.
@@ -18,4 +25,4 @@ The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), 
 
 ## [0.01.00.000] - 2024-08-23
 ### Added
-- First release
+- First release.
