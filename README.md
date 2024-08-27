@@ -1,4 +1,4 @@
-# IaC Snowflake Initialize Snowflake User with key pair authentication
+# IaC Snowflake User Create with RSA key pair authentication
 
 **Enhancing Efficiency and Security with Automated Snowflake User Management**
 
@@ -54,10 +54,10 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 
 2. Clone the repo:
     ```shell
-    git clone https://github.com/j3-signalroom/iac-snowflake-initialize-user_with_key_pair_authentication.git
+    git clone https://github.com/j3-signalroom/iac-snowflake-user-create_with_key_pair_authentication.git
     ```
 
-3. From the root folder of the `iac-snowflake-initialize-user_with_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
+3. From the root folder of the `iac-snowflake-user-create_with_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
     ```shell
     ./init-snowflake-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
                                                --snowflake_account=<SNOWFLAKE_ACCOUNT> \
