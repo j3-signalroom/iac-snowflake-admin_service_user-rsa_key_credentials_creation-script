@@ -48,7 +48,7 @@ do
             arg_length=22
             snowflake_warehouse=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--service_account_user="*)
-            arg_length=22
+            arg_length=23
             service_account_user=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
     esac
 done
