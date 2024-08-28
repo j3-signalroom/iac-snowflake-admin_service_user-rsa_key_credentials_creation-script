@@ -59,12 +59,12 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 
 3. From the root folder of the `iac-snowflake-user-create_with_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
     ```shell
-    ./init-snowflake-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
-                                               --snowflake_account=<SNOWFLAKE_ACCOUNT> \
-                                               --snowflake_user=<SNOWFLAKE_USER> \
-                                               --snowflake_password=<SNOWFLAKE_PASSWORD> \
-                                               --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
-                                               --service_account_user=<SERVICE_ACCOUNT_USER>
+    ./create-service-account-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
+                                                       --snowflake_account=<SNOWFLAKE_ACCOUNT> \
+                                                       --snowflake_user=<SNOWFLAKE_USER> \
+                                                       --snowflake_password=<SNOWFLAKE_PASSWORD> \
+                                                       --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
+                                                       --service_account_user=<SERVICE_ACCOUNT_USER>
     ```
     Argument placeholder|Replace with
     -|-
@@ -73,7 +73,7 @@ J3 has developed a script to dramatically improve both the efficiency and securi
     `<SNOWFLAKE_USER>`|your Snowflake username that has been granted `ACCOUNTADMIN` privileges.
     `<SNOWFLAKE_PASSWORD>`|your Snowflake password of the `<SNOWFLAKE_USER>`.
     `<SNOWFLAKE_WAREHOUSE>`|your Snowflake warehouse is the virtual cluster of compute resources that provides CPU, memory, and temporary storage to perform DML (Data Management Language) operations.
-    `<SERVICE_ACCOUNT_USER>`|the name of the Snowflake user to be created or updated.
+    `<SERVICE_ACCOUNT_USER>`|the name of the Snowflake service account user to be created or updated.
 
 
 After the script successfully runs it creates the following in Snowflake and the AWS Secrets Manager for you:
