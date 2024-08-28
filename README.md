@@ -21,7 +21,7 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 ### Motivation and Broader Impact:
 
 - **Streamlined Service Account Creation:**
-   - The primary motivation behind this script is to streamline the entire process of creating service accounts.  By bundling all necessary steps into one comprehensive solution, J3 has eliminated the need to retain original ACCOUNTADMIN credentials during the setup of new service accounts.
+   - The primary motivation behind this script is to streamline the entire process of creating service accounts. By bundling all necessary steps into one comprehensive solution, one doesn't have to put all the puzzle pieces together alone; it is already done for you (e.g., creating the RSA key pair, creating the snowflake user, and granting the roles).
    - This approach not only enhances security by reducing credential exposure but also reflects a commitment to delivering efficient, all-in-one solutions for managing cloud resources.
 
 ### Commitment to Excellence and Security:
