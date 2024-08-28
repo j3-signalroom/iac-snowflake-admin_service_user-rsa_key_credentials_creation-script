@@ -134,7 +134,12 @@ export AWS_REGION=$(aws configure get sso_region $AWS_PROFILE)
 
 # Function to handle the user creation error
 user_updater_handler() {
-    snow sql -q "ALTER USER ${service_account_user} SET RSA_PUBLIC_KEY=\"`cat public_key.pub`\", RSA_PUBLIC_KEY_2=\"`cat public_key_2.pub`\";" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "ALTER USER ${service_account_user} SET RSA_PUBLIC_KEY=\"`cat public_key_1.pub`\", RSA_PUBLIC_KEY_2=\"`cat public_key_2.pub`\";" --temporary-connection --role ACCOUNTADMIN
+
+    # Force the delete of the AWS Secret
+    aws secretsmanager delete-secret --secret-id '/snowflake_resource' --force-delete-without-recovery
+    aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_pem_1' --force-delete-without-recovery
+    aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_pem_2' --force-delete-without-recovery
 }
 
 # Set the trap to catch user creaation error
@@ -173,7 +178,7 @@ else
     snow sql -q "DROP USER IF EXISTS ${service_account_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Force the delete of the AWS Secret
-    aws secretsmanager delete-secret --secret-id '/snowflake_resource' --force-delete-without-recovery || true
-    aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_1' --force-delete-without-recovery || true
-    aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_2' --force-delete-without-recovery || true
+    aws secretsmanager delete-secret --secret-id '/snowflake_resource' --force-delete-without-recovery
+    aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_pem_1' --force-delete-without-recovery
+    aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_pem_2' --force-delete-without-recovery
 fi
