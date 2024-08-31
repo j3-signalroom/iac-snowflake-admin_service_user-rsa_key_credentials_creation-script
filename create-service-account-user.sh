@@ -142,7 +142,7 @@ user_updater_handler() {
     aws secretsmanager delete-secret --secret-id '/snowflake_resource/rsa_private_key_pem_2' --force-delete-without-recovery
 }
 
-# Set the trap to catch user creaation error
+# Set the trap to catch user creation error
 trap 'user_updater_handler' ERR
 
 # Execute the create or delete action
