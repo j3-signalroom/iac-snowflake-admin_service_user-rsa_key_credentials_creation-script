@@ -1,13 +1,13 @@
-# IaC Snowflake User Create with RSA key pair authentication
+# Snowflake Admin Service Account User with RSA Key Pair Authentication
 
 **Enhancing Efficiency and Security with Automated Snowflake User Management**
 
-J3 has developed a script to dramatically improve both the efficiency and security of operations at signalRoom.  This script focuses on simplifying the process of creating Snowflake users who utilize key pair authentication, which is crucial for secure access management.
+J3 has developed a script to dramatically improve both the efficiency and security of operations at signalRoom.  This script focuses on simplifying the process of creating Snowflake admin users who utilize key pair authentication.  These admin users will in the future be responsible for creating service account users.
 
 ### Key Features and Benefits:
 
 1. **Automated RSA Key Pair Generation:**
-   - The script automates the creation of RSA key pairs, which are essential for authenticating Snowflake users.  By handling this automatically, the script eliminates manual steps, making it easier for developers to integrate and manage Snowflake resources through Terraform or other Snowflake clients.
+   - The script automates the creation of RSA key pairs, which are essential for authenticating the Snowflake user.  By handling this automatically, the script eliminates manual steps, making it easier for developers to integrate and manage Snowflake resources through Terraform or other Snowflake clients.
    - This automation streamlines the authentication process, reducing setup time and potential errors, thereby enabling faster and more reliable deployment of Snowflake services.
 
 2. **Secure Storage in AWS Secrets Manager:**
@@ -20,8 +20,8 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 
 ### Motivation and Broader Impact:
 
-- **Streamlined Service Account Creation:**
-   - The primary motivation behind this script is to streamline the entire process of creating service accounts. By bundling all necessary steps into one comprehensive solution, one doesn't have to put all the puzzle pieces together alone; it is already done for you (e.g., creating the RSA key pair, creating the snowflake user, and granting the roles).
+- **Streamlined Admin User Creation:**
+   - The primary motivation behind this script is to streamline the entire process of creating admin users. By bundling all necessary steps into one comprehensive solution, one doesn't have to put all the puzzle pieces together alone; it is already done for you (e.g., creating the RSA key pair, creating the snowflake admin user, and granting the `ACCOUNTADMIN` role).
    - This approach not only enhances security by reducing credential exposure but also reflects a commitment to delivering efficient, all-in-one solutions for managing cloud resources.
 
 ### Commitment to Excellence and Security:
@@ -35,9 +35,9 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 + [1.0 Let's get started!](#10-lets-get-started)
     - [1.1 Snowflake](#11-snowflake)
     - [1.2 AWS Secrets Manager Secrets](#12-aws-secrets-manager-secrets)
-        + [1.2.1 `/snowflake_resource`](#121-snowflake_resource)
-        + [1.2.2 `/snowflake_resource/rsa_private_key_pem_1`](#122-snowflake_resourcersa_private_key_pem_1)
-        + [1.2.3 `/snowflake_resource/rsa_private_key_pem_2`](#123-snowflake_resourcersa_private_key_pem_2)
+        + [1.2.1 `/snowflake_admin_credentials`](#121-snowflake_admin_credentials)
+        + [1.2.2 `/snowflake_admin_credentials/rsa_private_key_pem_1`](#122-snowflake_admin_credentialsrsa_private_key_pem_1)
+        + [1.2.3 `/snowflake_admin_credentials/rsa_private_key_pem_2`](#123-snowflake_admin_credentialsrsa_private_key_pem_2)
 <!-- tocstop -->
 
 ## 1.0 Let's get started!
@@ -54,17 +54,17 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 
 2. Clone the repo:
     ```shell
-    git clone https://github.com/j3-signalroom/iac-snowflake-user-create_with_key_pair_authentication.git
+    git clone https://github.com/j3-signalroom/create-snowflake_admin_user-with_rsa_key_pair_authentication.git
     ```
 
-3. From the root folder of the `iac-snowflake-user-create_with_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
+3. From the root folder of the `create-snowflake_admin_user-with_rsa_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
     ```shell
-    ./create-service-account-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
-                                                       --snowflake_account=<SNOWFLAKE_ACCOUNT> \
-                                                       --snowflake_user=<SNOWFLAKE_USER> \
-                                                       --snowflake_password=<SNOWFLAKE_PASSWORD> \
-                                                       --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
-                                                       --service_account_user=<SERVICE_ACCOUNT_USER>
+    ./create-admin-service-account-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
+                                                             --snowflake_account=<SNOWFLAKE_ACCOUNT> \
+                                                             --snowflake_user=<SNOWFLAKE_USER> \
+                                                             --snowflake_password=<SNOWFLAKE_PASSWORD> \
+                                                             --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
+                                                             --admin_user=<ADMIN_USER>
     ```
     Argument placeholder|Replace with
     -|-
@@ -73,28 +73,29 @@ J3 has developed a script to dramatically improve both the efficiency and securi
     `<SNOWFLAKE_USER>`|your Snowflake username that has been granted `ACCOUNTADMIN` privileges.
     `<SNOWFLAKE_PASSWORD>`|your Snowflake password of the `<SNOWFLAKE_USER>`.
     `<SNOWFLAKE_WAREHOUSE>`|your Snowflake warehouse is the virtual cluster of compute resources that provides CPU, memory, and temporary storage to perform DML (Data Management Language) operations.
-    `<SERVICE_ACCOUNT_USER>`|the name of the Snowflake service account user to be created or updated.
+    `<ADMIN_USER>`|the name of the new Snowflake ACCOUNTADMIN user to be created or updated.
 
 
 After the script successfully runs it creates the following in Snowflake and the AWS Secrets Manager for you:
 
 ### 1.1 Snowflake
-Below is a picture of an example Terraform Snowflake service account user created with the `SYSADMIN` and `SECURITYADMIN` roles granted by the script:
-![tf-snowflake-user-detail-view-screenshot](.blog/images/tf-snowflake-user-detail-view-screenshot.png)
+Below is a picture of an example Snowflake admin user created with the `ACCOUNTADMIN` role granted by the script:
+![admin_svc_user-detail-view-screenshot](.blog/images/admin_svc_user-detail-view-screenshot.png)
 
 ### 1.2 AWS Secrets Manager Secrets
 Here is the list of secrets generated by the Terraform script:
 
-#### 1.2.1 `/snowflake_resource`
+#### 1.2.1 `/snowflake_admin_credentials`
 > Key|Description
 > -|-
 > `account`|your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
-> `user`|the Snowflake service account user associated with the RSA key pairs.
-> `rsa_public_key_1`|the `user` RSA public key.
-> `rsa_public_key_2`|the `user` RSA public key.
+> `admin_user`|the Snowflake admin user that administratives current and future service account users.
+> `active_rsa_public_key_number`|The current active RSA public key number.
+> `rsa_public_key_1`|the `admin_user` RSA public key 1.
+> `rsa_public_key_2`|the `admin_user` RSA public key 2.
 
-#### 1.2.2 `/snowflake_resource/rsa_private_key_pem_1`
-The `user` RSA private key PEM 1.
+#### 1.2.2 `/snowflake_admin_credentials/rsa_private_key_pem_1`
+The admin RSA private key PEM 1.
 
-#### 1.2.3 `/snowflake_resource/rsa_private_key_pem_2`
-The `user` RSA private key PEM 2.
+#### 1.2.3 `/snowflake_admin_credentials/rsa_private_key_pem_2`
+The admin RSA private key PEM 2.
