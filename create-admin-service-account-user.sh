@@ -161,6 +161,8 @@ then
     # to the ACCOUNTADMIN role needed for account management
     snow sql -q "CREATE USER ${admin_user} RSA_PUBLIC_KEY=\"`cat public_key_1.pub`\" DEFAULT_ROLE=PUBLIC MUST_CHANGE_PASSWORD=FALSE;" --temporary-connection --role ACCOUNTADMIN
     snow sql -q "GRANT ROLE ACCOUNTADMIN TO USER ${admin_user};" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "GRANT ROLE SECURITYADMIN TO USER ${admin_user};" --temporary-connection --role ACCOUNTADMIN
+    snow sql -q "GRANT ROLE SYSADMIN TO USER ${admin_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Create or Update the AWS Secret
     aws secretsmanager create-secret --name '/snowflake_admin_credentials' --secret-string "{\"account\":\"$snowflake_account\",\"admin_user\":\"$admin_user\",\"active_rsa_public_key_number\":1,\"rsa_public_key_1\":\"`cat public_key_1.pub`\",\"rsa_public_key_2\":\"`cat public_key_2.pub`\"}"
