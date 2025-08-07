@@ -2,12 +2,12 @@
 
 #
 # *** Script Syntax ***
-# ./create-admin-service-account-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
-#                                                          --snowflake_account=<SNOWFLAKE_ACCOUNT> \
-#                                                          --snowflake_user=<SNOWFLAKE_USER> \
-#                                                          --snowflake_password=<SNOWFLAKE_PASSWORD> \
-#                                                          --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
-#                                                          --admin_user=<ADMIN_USER>
+# ./create-admin-user-and-store-rsa-key-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME>
+#                                                                        --snowflake_account=<SNOWFLAKE_ACCOUNT>
+#                                                                        --snowflake_user=<SNOWFLAKE_USER>
+#                                                                        --snowflake_password=<SNOWFLAKE_PASSWORD>
+#                                                                        --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>
+#                                                                        --admin_user=<ADMIN_USER>
 #
 #
 
