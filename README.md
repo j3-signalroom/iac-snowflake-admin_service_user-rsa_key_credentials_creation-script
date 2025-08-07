@@ -1,4 +1,4 @@
-# Snowflake Admin Service Account User with RSA Key Pair Authentication
+# Snowflake Admin User RSA Key Credentials Creation Script
 
 **Enhancing Efficiency and Security with Automated Snowflake User Management**
 
