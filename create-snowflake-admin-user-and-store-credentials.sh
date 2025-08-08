@@ -37,7 +37,7 @@ do
         *"--profile="*)
             AWS_PROFILE=$arg;;
         *"--snowflake_account_identifier="*)
-            arg_length=21
+            arg_length=31
             snowflake_account_identifier=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--snowflake_user="*)
             arg_length=17
@@ -46,7 +46,7 @@ do
             arg_length=21
             snowflake_password=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--snowflake_warehouse="*)
-            arg_length=31
+            arg_length=22
             snowflake_warehouse=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--secrets_root_path="*)
             arg_length=20
@@ -136,7 +136,7 @@ fi
 
 # Set the Snowflake environment credential variables that are
 # used by the Snowflalke CLI commands to authenticate
-export SNOWFLAKE_ACCOUNT_IDENTIFIER="${snowflake_account_identifier}"
+export SNOWFLAKE_ACCOUNT="${snowflake_account_identifier}"
 export SNOWFLAKE_USER=${snowflake_user}
 export SNOWFLAKE_PASSWORD=${snowflake_password}
 export SNOWFLAKE_WAREHOUSE=${snowflake_warehouse}
@@ -180,7 +180,7 @@ then
     snow sql -q "GRANT ROLE SYSADMIN TO USER ${new_admin_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Create or Update the AWS Secret
-    aws secretsmanager create-secret --name "$secrets_root_path" --secret-string "{\"snowflake_account_identifier\":\"$snowflake_account_identifier\",\"new_admin_user\":\"$new_admin_user\",\"snowflake_organization_name\":\"${snowflake_account_identifier%-*}\",\"snowflake_account_name\":\"${snowflake_account_identifier#*-}\",\"active_key_number\":1,\"snowflake_rsa_public_key_1_pem\":\"`cat public_key_1.pub`\",\"snowflake_rsa_public_key_2_pem\":\"`cat public_key_2.pub`\",\"snowflake_rsa_private_key_pem_1\":\"`cat private_key_1.b64`\",\"snowflake_rsa_private_key_pem_2\":\"`cat private_key_2.b64`\"}"
+    aws secretsmanager create-secret --name "$secrets_root_path" --secret-string "{\"snowflake_account_identifier\":\"$snowflake_account_identifier\",\"snowflake_organization_name\":\"${snowflake_account_identifier%-*}\",\"snowflake_account_name\":\"${snowflake_account_identifier#*-}\",\"new_admin_user\":\"$new_admin_user\",\"active_key_number\":1,\"snowflake_rsa_public_key_1_pem\":\"`cat public_key_1.pub`\",\"snowflake_rsa_public_key_2_pem\":\"`cat public_key_2.pub`\",\"snowflake_rsa_private_key_1_pem\":\"`cat private_key_1.b64`\",\"snowflake_rsa_private_key_2_pem\":\"`cat private_key_2.b64`\"}"
 
     # Remove the RSA key pairs
     rm private_key_1.p8
