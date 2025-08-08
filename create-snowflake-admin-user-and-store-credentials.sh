@@ -3,7 +3,7 @@
 #
 # *** Script Syntax ***
 # ./create-snowflake-admin-user-and-store-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME>
-#                                                                          --account_identifier=<ACCOUNT_IDENTIFIER>
+#                                                                          --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER>
 #                                                                          --snowflake_user=<SNOWFLAKE_USER>  
 #                                                                          --snowflake_password=<SNOWFLAKE_PASSWORD>
 #                                                                          --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>
@@ -22,7 +22,7 @@ case $1 in
     echo
     echo "(Error Message 001)  You did not specify one of the commands: create | delete."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0` <create | delete> --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0` <create | delete> --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
     ;;
@@ -36,9 +36,9 @@ do
     case $arg in
         *"--profile="*)
             AWS_PROFILE=$arg;;
-        *"--account_identifier="*)
+        *"--snowflake_account_identifier="*)
             arg_length=21
-            account_identifier=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
+            snowflake_account_identifier=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--snowflake_user="*)
             arg_length=17
             snowflake_user=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
@@ -46,7 +46,7 @@ do
             arg_length=21
             snowflake_password=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--snowflake_warehouse="*)
-            arg_length=22
+            arg_length=31
             snowflake_warehouse=${arg:$arg_length:$(expr ${#arg} - $arg_length)};;
         *"--secrets_root_path="*)
             arg_length=20
@@ -63,18 +63,18 @@ then
     echo
     echo "(Error Message 002)  You did not include the proper use of the --profile=<AWS_SSO_SSO_PROFILE_NAME> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
 
-# Check required --account_identifier argument was supplied
-if [ -z $account_identifier ]
+# Check required --snowflake_account_identifier argument was supplied
+if [ -z $snowflake_account_identifier ]
 then
     echo
-    echo "(Error Message 003)  You did not include the proper use of the --account_identifier=<ACCOUNT_IDENTIFIER> argument in the call."
+    echo "(Error Message 003)  You did not include the proper use of the --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -85,7 +85,7 @@ then
     echo
     echo "(Error Message 004)  You did not include the proper use of the --snowflake_user=<SNOWFLAKE_USER> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -96,7 +96,7 @@ then
     echo
     echo "(Error Message 005)  You did not include the proper use of the --snowflake_password=<SNOWFLAKE_PASSWORD> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -107,7 +107,7 @@ then
     echo
     echo "(Error Message 006)  You did not include the proper use of the --snowflake_user=<SNOWFLAKE_WAREHOUSE> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -118,7 +118,7 @@ then
     echo
     echo "(Error Message 007)  You did not include the proper use of the --secrets_root_path=<SECRETS_ROOT_PATH> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
@@ -129,14 +129,14 @@ then
     echo
     echo "(Error Message 008)  You did not include the proper use of the --new_admin_user=<NEW_ADMIN_USER> argument in the call."
     echo
-    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --account_identifier=<ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
+    echo "Usage:  Require all four arguments ---> `basename $0 $1` --profile=<SSO_PROFILE_NAME> --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER> --snowflake_user=<SNOWFLAKE_USER> --snowflake_password=<SNOWFLAKE_PASSWORD> --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> --secrets_root_path=<SECRETS_ROOT_PATH> --new_admin_user=<NEW_ADMIN_USER>"
     echo
     exit 85 # Common GNU/Linux Exit Code for 'Interrupted system call should be restarted'
 fi
 
 # Set the Snowflake environment credential variables that are
 # used by the Snowflalke CLI commands to authenticate
-export ACCOUNT_IDENTIFIER="${account_identifier}"
+export SNOWFLAKE_ACCOUNT_IDENTIFIER="${snowflake_account_identifier}"
 export SNOWFLAKE_USER=${snowflake_user}
 export SNOWFLAKE_PASSWORD=${snowflake_password}
 export SNOWFLAKE_WAREHOUSE=${snowflake_warehouse}
@@ -153,9 +153,7 @@ user_updater_handler() {
     snow sql -q "ALTER USER ${new_admin_user} UNSET RSA_PUBLIC_KEY_2;" --temporary-connection --role ACCOUNTADMIN
 
     # Force the delete of the AWS Secret
-    aws secretsmanager delete-secret --secret-id '/snowflake_admin_credentials' --force-delete-without-recovery
-    aws secretsmanager delete-secret --secret-id '/snowflake_admin_credentials/rsa_private_key_pem_1' --force-delete-without-recovery
-    aws secretsmanager delete-secret --secret-id '/snowflake_admin_credentials/rsa_private_key_pem_2' --force-delete-without-recovery
+    aws secretsmanager delete-secret --secret-id "$secrets_root_path" --force-delete-without-recovery
 }
 
 # Set the trap to catch user creation error
@@ -182,7 +180,7 @@ then
     snow sql -q "GRANT ROLE SYSADMIN TO USER ${new_admin_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Create or Update the AWS Secret
-    aws secretsmanager create-secret --name '/snowflake_admin1_credentials' --secret-string "{\"account_identifier\":\"$account_identifier\",\"new_admin_user\":\"$new_admin_user\",\"active_key_number\":1,\"rsa_public_key_1\":\"`cat public_key_1.pub`\",\"rsa_public_key_2\":\"`cat public_key_2.pub`\",\"rsa_private_key_pem_1\":\"`cat private_key_1.b64`\",\"rsa_private_key_pem_2\":\"`cat private_key_2.b64`\"}"
+    aws secretsmanager create-secret --name "$secrets_root_path" --secret-string "{\"snowflake_account_identifier\":\"$snowflake_account_identifier\",\"new_admin_user\":\"$new_admin_user\",\"snowflake_organization_name\":\"${snowflake_account_identifier%-*}\",\"snowflake_account_name\":\"${snowflake_account_identifier#*-}\",\"active_key_number\":1,\"snowflake_rsa_public_key_1_pem\":\"`cat public_key_1.pub`\",\"snowflake_rsa_public_key_2_pem\":\"`cat public_key_2.pub`\",\"snowflake_rsa_private_key_pem_1\":\"`cat private_key_1.b64`\",\"snowflake_rsa_private_key_pem_2\":\"`cat private_key_2.b64`\"}"
 
     # Remove the RSA key pairs
     rm private_key_1.p8
@@ -196,5 +194,5 @@ else
     snow sql -q "DROP USER IF EXISTS ${new_admin_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Force the delete of the AWS Secret
-    aws secretsmanager delete-secret --secret-id '/snowflake_admin_credentials' --force-delete-without-recovery
+    aws secretsmanager delete-secret --secret-id "$secrets_root_path" --force-delete-without-recovery
 fi
