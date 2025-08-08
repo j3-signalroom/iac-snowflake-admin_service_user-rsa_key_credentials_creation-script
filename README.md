@@ -1,8 +1,8 @@
-# Snowflake Admin Service Account User with RSA Key Pair Authentication
+# Snowflake Admin User RSA Key Credentials Creation Script
 
 **Enhancing Efficiency and Security with Automated Snowflake User Management**
 
-J3 has developed a script to dramatically improve both the efficiency and security of operations at signalRoom.  This script focuses on simplifying the process of creating Snowflake admin users who utilize key pair authentication.  These admin users will in the future be responsible for creating service account users.
+This script greatly enhances the efficiency and security of an enterprise's operations. It aims to simplify the process of creating Snowflake admin users who use key pair authentication. These admin users will eventually be responsible for creating service account users.
 
 ### Key Features and Benefits:
 
@@ -44,9 +44,6 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 + [1.0 Let's get started!](#10-lets-get-started)
     - [1.1 Snowflake](#11-snowflake)
     - [1.2 AWS Secrets Manager Secrets](#12-aws-secrets-manager-secrets)
-        + [1.2.1 `/snowflake_admin_credentials`](#121-snowflake_admin_credentials)
-        + [1.2.2 `/snowflake_admin_credentials/rsa_private_key_pem_1`](#122-snowflake_admin_credentialsrsa_private_key_pem_1)
-        + [1.2.3 `/snowflake_admin_credentials/rsa_private_key_pem_2`](#123-snowflake_admin_credentialsrsa_private_key_pem_2)
 <!-- tocstop -->
 
 ## 1.0 Let's get started!
@@ -63,48 +60,47 @@ J3 has developed a script to dramatically improve both the efficiency and securi
 
 2. Clone the repo:
     ```shell
-    git clone https://github.com/j3-signalroom/create-snowflake_admin_user-with_rsa_key_pair_authentication.git
+    git clone https://github.com/j3-signalroom/snowflake_admin_user_rsa_key_credentials_creation_script.git
     ```
 
 3. From the root folder of the `create-snowflake_admin_user-with_rsa_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
     ```shell
-    ./create-admin-service-account-user.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
-                                                             --snowflake_account=<SNOWFLAKE_ACCOUNT> \
-                                                             --snowflake_user=<SNOWFLAKE_USER> \
-                                                             --snowflake_password=<SNOWFLAKE_PASSWORD> \
-                                                             --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
-                                                             --admin_user=<ADMIN_USER>
+    ./create-snowflake-admin-user-and-store-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
+                                                                             --account_identifier=<ACCOUNT_IDENTIFIER> \
+                                                                             --snowflake_user=<SNOWFLAKE_USER> \
+                                                                             --snowflake_password=<SNOWFLAKE_PASSWORD> \
+                                                                             --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
+                                                                             --secrets_root_path=<SECRETS_ROOT_PATH> \
+                                                                             --new_admin_user=<NEW_ADMIN_USER>
     ```
     Argument placeholder|Replace with
     -|-
     `<SSO_PROFILE_NAME>`|your AWS SSO profile name for your AWS infrastructue that houses your AWS Secrets Manager.
-    `<SNOWFLAKE_ACCOUNT>`|your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+    `<ACCOUNT_IDENTIFIER>`|your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
     `<SNOWFLAKE_USER>`|your Snowflake username that has been granted `ACCOUNTADMIN` privileges.
     `<SNOWFLAKE_PASSWORD>`|your Snowflake password of the `<SNOWFLAKE_USER>`.
     `<SNOWFLAKE_WAREHOUSE>`|your Snowflake warehouse is the virtual cluster of compute resources that provides CPU, memory, and temporary storage to perform DML (Data Management Language) operations.
-    `<ADMIN_USER>`|the name of the new Snowflake ACCOUNTADMIN user to be created or updated.
+    `<SECRETS_ROOT_PATH>`|the root path in AWS Secrets Manager where the secrets will be stored.
+    `<NEW_ADMIN_USER>`|the name of the new Snowflake ACCOUNTADMIN user to be created or updated.
 
 
 After the script successfully runs it creates the following in Snowflake and the AWS Secrets Manager for you:
 
 ### 1.1 Snowflake
 Below is a picture of an example Snowflake admin user created with the `ACCOUNTADMIN` role granted by the script:
-![admin-svc-user-detail-view-screenshot](.blog/images/admin-svc-user-detail-view-screenshot.png)
+![admin-svc-user-detail-view-screenshot](.blog/images/admin-user-detail-view-screenshot.png)
 
 ### 1.2 AWS Secrets Manager Secrets
 Here is the list of secrets generated by the Terraform script:
 
-#### 1.2.1 `/snowflake_admin_credentials`
 > Key|Description
 > -|-
-> `account`|your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
-> `admin_user`|the Snowflake admin user that administratives current and future service account users.
-> `active_rsa_public_key_number`|The current active RSA public key number.
-> `rsa_public_key_1`|the `admin_user` RSA public key 1.
-> `rsa_public_key_2`|the `admin_user` RSA public key 2.
-
-#### 1.2.2 `/snowflake_admin_credentials/rsa_private_key_pem_1`
-The admin RSA private key PEM 1.
-
-#### 1.2.3 `/snowflake_admin_credentials/rsa_private_key_pem_2`
-The admin RSA private key PEM 2.
+> `snowflake_account_identifier`|your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+> `snowflake_organization_name`|the name of your Snowflake organization, which is the part of the account identifier before the hyphen.
+> `snowflake_account_name`|the name of your Snowflake account, which is the part of the account identifier after the hyphen.
+> `new_admin_user`|the Snowflake admin user that administratives current and future service account users.
+> `active_key_number`|The current active RSA public key number.
+> `snowflake_rsa_public_key_1_pem`|the `new_admin_user` Snowflake RSA Public Key 1 PEM.
+> `snowflake_rsa_public_key_2_pem`|the `new_admin_user` Snowflake RSA Public Key 2 PEM.
+> `snowflake_rsa_private_key_1_pem`|the `new_admin_user` Snowflake RSA Private Key 1 PEM.
+> `snowflake_rsa_private_key_2_pem`|the `new_admin_user` Snowflake RSA Private Key 2 PEM.
