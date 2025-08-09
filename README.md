@@ -88,6 +88,7 @@ After the script successfully runs it creates the following in Snowflake and the
 
 ### 1.1 Snowflake
 Below is a picture of an example Snowflake admin user created with the `ACCOUNTADMIN` role granted by the script:
+
 ![admin-svc-user-detail-view-screenshot](.blog/images/admin-user-detail-view-screenshot.png)
 
 ### 1.2 AWS Secrets Manager Secrets
