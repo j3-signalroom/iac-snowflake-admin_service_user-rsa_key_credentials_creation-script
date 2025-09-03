@@ -2,13 +2,13 @@
 
 #
 # *** Script Syntax ***
-# ./create-snowflake-admin-user-and-store-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME>
-#                                                                          --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER>
-#                                                                          --snowflake_user=<SNOWFLAKE_USER>  
-#                                                                          --snowflake_password=<SNOWFLAKE_PASSWORD>
-#                                                                          --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>
-#                                                                          --secrets_root_path=<SECRETS_ROOT_PATH>
-#                                                                          --new_admin_user=<NEW_ADMIN_USER>
+# ./create-store-snowflake-admin-user-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME>
+#                                                                      --snowflake_account_identifier=<SNOWFLAKE_ACCOUNT_IDENTIFIER>
+#                                                                      --snowflake_user=<SNOWFLAKE_USER>  
+#                                                                      --snowflake_password=<SNOWFLAKE_PASSWORD>
+#                                                                      --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE>
+#                                                                      --secrets_root_path=<SECRETS_ROOT_PATH>
+#                                                                      --new_admin_user=<NEW_ADMIN_USER>
 #
 #
 
