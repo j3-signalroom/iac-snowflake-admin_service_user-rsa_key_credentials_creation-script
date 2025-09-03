@@ -1,5 +1,5 @@
 # IaC Snowflake Admin User RSA Key Credentials Creation Script
-This script greatly enhances the efficiency and security of an enterprise's operations. It aims to simplify the process of creating Snowflake admin users who use RSA key pair authentication. These admin users will eventually be responsible for creating Snowflake User or Service Accounts.  Especially since as of November 2025, Snowflake announced in 2024 that it will [block single-factor password authentication](https://www.snowflake.com/en/blog/blocking-single-factor-password-authentification/) for user and service accounts!
+This script greatly enhances the efficiency and security of an enterprise's operations. It aims to simplify the process of creating Snowflake admin users who use RSA key pair authentication. These admin users will eventually be responsible for creating Snowflake User or Service Accounts.  **Especially since as of November 2025, Snowflake announced in 2024 that it will [block single-factor password authentication](https://www.snowflake.com/en/blog/blocking-single-factor-password-authentification/) for user and service accounts!**
 
 ![holy-shit-shocked](.blog/images/holy-shit-shocked.gif)
 
