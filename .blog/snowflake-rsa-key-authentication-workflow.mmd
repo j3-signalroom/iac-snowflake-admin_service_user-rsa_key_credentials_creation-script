@@ -1,0 +1,63 @@
+sequenceDiagram
+    participant Script as Bash Script
+    participant OpenSSL as OpenSSL
+    participant FS as File System
+    participant Snow as Snowflake CLI
+    participant AWS as AWS Secrets Manager
+
+    Note over Script: RSA Key Pair 1 Generation
+    Script->>OpenSSL: genrsa 2048
+    OpenSSL-->>Script: RSA private key (raw)
+    Script->>OpenSSL: pkcs8 -topk8 -inform PEM -nocrypt
+    OpenSSL->>FS: private_key_1.p8
+    
+    Script->>OpenSSL: rsa -pubout -outform DER
+    OpenSSL-->>Script: Public key (DER format)
+    Script->>OpenSSL: base64 -A
+    OpenSSL->>FS: public_key_1.pub
+    
+    Script->>OpenSSL: base64 -A (private key)
+    OpenSSL->>FS: private_key_1.b64
+
+    Note over Script: RSA Key Pair 2 Generation
+    Script->>OpenSSL: genrsa 2048
+    OpenSSL-->>Script: RSA private key (raw)
+    Script->>OpenSSL: pkcs8 -topk8 -inform PEM -nocrypt
+    OpenSSL->>FS: private_key_2.p8
+    
+    Script->>OpenSSL: rsa -pubout -outform DER
+    OpenSSL-->>Script: Public key (DER format)
+    Script->>OpenSSL: base64 -A
+    OpenSSL->>FS: public_key_2.pub
+    
+    Script->>OpenSSL: base64 -A (private key)
+    OpenSSL->>FS: private_key_2.b64
+
+    Note over Script: Snowflake User Creation
+    Script->>FS: cat public_key_1.pub
+    FS-->>Script: Public key content
+    Script->>Snow: CREATE USER with RSA_PUBLIC_KEY
+    Snow-->>Script: User created successfully
+    
+    Script->>Snow: GRANT ROLE ACCOUNTADMIN
+    Snow-->>Script: Role granted
+    
+    Script->>Snow: GRANT ROLE SECURITYADMIN
+    Snow-->>Script: Role granted
+    
+    Script->>Snow: GRANT ROLE SYSADMIN
+    Snow-->>Script: Role granted
+
+    Note over Script: AWS Secret Creation
+    Script->>FS: cat public_key_1.pub
+    FS-->>Script: Public key 1 content
+    Script->>FS: cat public_key_2.pub
+    FS-->>Script: Public key 2 content
+    Script->>FS: cat private_key_1.b64
+    FS-->>Script: Private key 1 content
+    Script->>FS: cat private_key_2.b64
+    FS-->>Script: Private key 2 content
+    
+    Script->>AWS: create-secret with JSON payload
+    Note right of AWS: Secret contains:<br/>- Account info<br/>- User info<br/>- Both public keys<br/>- Both private keys<br/>- Active key: 1
+    AWS-->>Script: Secret created successfully
