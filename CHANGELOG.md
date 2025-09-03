@@ -5,6 +5,9 @@ The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), 
 
 
 ## [1.00.00.000] - TBD
+### Added
+- Issue [#63](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/63)
+
 ### Changed
 - Issue [#61](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/61)
 
