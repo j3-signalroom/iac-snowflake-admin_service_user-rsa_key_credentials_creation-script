@@ -63,15 +63,15 @@ This script greatly enhances the efficiency and security of an enterprise's oper
     git clone https://github.com/j3-signalroom/snowflake_admin_user_rsa_key_credentials_creation_script.git
     ```
 
-3. From the root folder of the `create-snowflake_admin_user-with_rsa_key_pair_authentication/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
+3. From the root folder of the `snowflake_admin_user_rsa_key_credentials_creation_script/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
     ```shell
-    ./create-snowflake-admin-user-and-store-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
-                                                                             --account_identifier=<ACCOUNT_IDENTIFIER> \
-                                                                             --snowflake_user=<SNOWFLAKE_USER> \
-                                                                             --snowflake_password=<SNOWFLAKE_PASSWORD> \
-                                                                             --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
-                                                                             --secrets_root_path=<SECRETS_ROOT_PATH> \
-                                                                             --new_admin_user=<NEW_ADMIN_USER>
+    ./create-store-snowflake-admin-user-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
+                                                                         --account_identifier=<ACCOUNT_IDENTIFIER> \
+                                                                         --snowflake_user=<SNOWFLAKE_USER> \
+                                                                         --snowflake_password=<SNOWFLAKE_PASSWORD> \
+                                                                         --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
+                                                                         --secrets_root_path=<SECRETS_ROOT_PATH> \
+                                                                         --new_admin_user=<NEW_ADMIN_USER>
     ```
     Argument placeholder|Replace with
     -|-
