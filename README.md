@@ -1,5 +1,5 @@
 # IaC Snowflake Admin Service User RSA Key Credentials Creation Script
-This script greatly enhances the efficiency and security of an enterprise’s operations. It streamlines the process of creating a Snowflake admin service user that uses RSA key pair authentication. This admin service user will eventually be responsible for creating Snowflake Service Users.
+This script automates the creation of a Snowflake admin service user secured with RSA key-pair authentication. Designed for enterprise environments, it standardizes and accelerates the onboarding of Snowflake service users while maintaining strict security and compliance controls.
 
 **Table of Contents**
 
@@ -7,8 +7,11 @@ This script greatly enhances the efficiency and security of an enterprise’s op
 + [**1.0 Let's get started!**](#10-lets-get-started)
     - [**1.1 Snowflake**](#11-snowflake)
     - [**1.2 AWS Secrets Manager Secrets**](#12-aws-secrets-manager-secrets)
-+ [**2.0 How the Script Works**](#20-how-the-script-works)
-    - [**2.1 Script Sequence Diagram**](#21-script-sequence-diagram)
++ [**2.0 Inside the Script**](#20-inside-the-script)
+    - [**2.1 What it Does**](#21-what-it-does)
+        - [**2.1.1 Create Mode**](#211-create-mode)
+        - [**2.1.2 Delete Mode**](#212-delete-mode)
+    - [**2.2 Script Sequence Diagram**](#22-script-sequence-diagram)
 + [**3.0 Resources**](#resources)
 <!-- tocstop -->
 
@@ -49,8 +52,65 @@ This script greatly enhances the efficiency and security of an enterprise’s op
     `<SECRETS_ROOT_PATH>`|the root path in AWS Secrets Manager where the secrets will be stored.
     `<NEW_ADMIN_SERVICE_USER>`|the name of the new Snowflake ACCOUNTADMIN service user to be created or updated.
 
+For instance, here is an example command to create a new Snowflake admin service user named `admin_service_user`:
 
-After the script successfully runs it creates the following in Snowflake and the AWS Secrets Manager for you:
+```shell
+./provision-snowflake-admin-credentials.sh create --profile=AdministratorAccess-0123987654321 \
+                                                  --snowflake_account_identifier=abcdef-xyz12345 \
+                                                  --snowflake_admin_user=your_admin_user \
+                                                  --snowflake_password=your_admin_password \
+                                                  --snowflake_warehouse=COMPUTE_WH \
+                                                  --secrets_root_path=/snowflake_admin_service_user_credentials \
+                                                  --new_admin_service_user=admin_service_user
+```
+
+The output of the script running successfully:
+```shell
+Attempting to automatically open the SSO authorization page in your default browser.
+If the browser does not open or you wish to use a different device to authorize this request, open the following URL:
+
+https://your-organization.awsapps.com/start/#/device
+
+Then enter the code:
+
+WXYZ-ABCD
+Successfully logged into Start URL: https://your-organization.awsapps.com/start
+writing RSA key
+writing RSA key
+CREATE USER admin_service_user TYPE=SERVICE RSA_PUBLIC_KEY="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApVfuwgFR6bD0qIj+Em2E6asyvZ66I0BgHG6uxgzQzy0NxGVXSguXDWdQGyAWce4WGD8ZKG4g1UFgY+swF1jqHXpWQqHd1mG99XigUSFhr0iF8cD7eA797GAygPyWywfYeK2aRduedqh9+DGtVF8jfeT+KCV6GQWZqFv1nChJY+o1rDpF14PhmVVwyEpNrmiJ3WUIeQo7m1gRL1ZlNKaucahuHIOoJUaKlC0xYY3AkHgZecN24d/HF5TN0TX4rb6fXUQgbkj1ga3WxsaEoyq8mU4DwrLo/Eqhngx9Dq3GQUU8cxvZrwJm6XRn5WgFRpWafDBnBJuP8xDHTG5oN9bbywIDAQAB" DEFAULT_ROLE=PUBLIC;
++-----------------------------------------------+
+| status                                        |
+|-----------------------------------------------|
+| User ADMIN_SERVICE_USER successfully created. |
++-----------------------------------------------+
+
+GRANT ROLE ACCOUNTADMIN TO USER admin_service_user;
++----------------------------------+
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+
+GRANT ROLE SECURITYADMIN TO USER admin_service_user;
++----------------------------------+
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+
+GRANT ROLE SYSADMIN TO USER admin_service_user;
++----------------------------------+
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+
+{
+    "ARN": "arn:aws:secretsmanager:us-east-1:0123987654321:secret:/snowflake_admin_service_user_credentials-0zVHcy",
+    "Name": "/snowflake_admin_service_user_credentials",
+    "VersionId": "645f7f6c-e8ef-4fba-b0c6-7ece065abdfd"
+}
+```
 
 ### **1.1 Snowflake**
 Below is a picture of an example Snowflake admin service user created with the `ACCOUNTADMIN` role granted by the script:
@@ -58,7 +118,7 @@ Below is a picture of an example Snowflake admin service user created with the `
 ![admin-service-user-detail-view-screenshot](.blog/images/admin-service-user-detail-view-screenshot.png)
 
 ### **1.2 AWS Secrets Manager Secrets**
-Here is the list of secrets generated by the script:
+Here is the list of secret keys generated by the script:
 
 > Key|Description
 > -|-
@@ -72,38 +132,43 @@ Here is the list of secrets generated by the script:
 > `snowflake_rsa_private_key_1_pem`|The `new_admin_service_user` Snowflake RSA Private Key 1 PEM, which is encoded in **base64**.
 > `snowflake_rsa_private_key_2_pem`|The `new_admin_service_user` Snowflake RSA Private Key 2 PEM, which is encoded in **base64**.
 
-## **2.0 How the Script Works**
-Below is a list of the key benefits of this script:
+## **2.0 Inside the Script**
+This bash script provisions or removes Snowflake admin credentials by creating a service account with RSA key-pair authentication and storing the credentials in AWS Secrets Manager:
 
-1. **Automated RSA Key Pair Generation:**
-   - The script automates the creation of RSA key pairs, which are essential for authenticating the Snowflake user.  By handling this automatically, the script eliminates manual steps, making it easier for developers to integrate and manage Snowflake resources through Terraform or other Snowflake clients.
-   - This automation streamlines the authentication process, reducing setup time and potential errors, thereby enabling faster and more reliable deployment of Snowflake services.
+### **2.1 What it Does**
 
-2. **Minimal required permissions:**
-   - The script grants the smallest set of privileges that the admin service user needs to perform its required actions. This approach is part of the principle of *least privilege*, a security best practice that minimizes the potential for unauthorized access or accidental modifications by limiting permissions to only what is necessary.  Below is the list of roles that will be granted to the admin service user:
+#### **2.1.1 Create Mode**
+When run in `create` mode, the script performs the following actions:
 
-      Role|Description
-      -|-
-      `ACCOUNTADMIN`|The `ACCOUNTADMIN` role in Snowflake is the highest-level administrative role within a Snowflake account. It has full control over all objects, resources, and configurations within the account. This role is responsible for managing all aspects of the Snowflake environment, including user access, resource allocation, and security settings.
-      `SECURITYADMIN`|The `SECURITYADMIN` role in Snowflake is a built-in system role designed to manage security-related tasks, primarily concerning user and role management. The `SECURITYADMIN` role has elevated privileges that allow it to control access within a Snowflake account, making it one of the key roles for maintaining the security posture of a Snowflake environment.
-      `SYSADMIN`|The `SYSADMIN` role in Snowflake is one of the predefined system roles that comes with a broad set of administrative privileges. It is designed to provide comprehensive control over most Snowflake resources, such as databases, schemas, warehouses, and other objects within an account. The `SYSADMIN` role is typically used for database administrators who manage the creation and configuration of Snowflake resources and control access to them.
+1. Generates two RSA key pairs (2048-bit) for Snowflake authentication, converting them to the required formats (PKCS8 private keys and base64-encoded public keys)
 
-3. **Secure Storage in AWS Secrets Manager:**
-   - User information and RSA key pairs are securely stored in AWS Secrets Manager.  This ensures that sensitive data is protected while remaining easily accessible for future use without needing to compromise security.
-   - The integration with AWS Secrets Manager supports secure key management practices, safeguarding against unauthorized access and simplifying the retrieval of credentials when needed.
+2. Creates a Snowflake service user with:
+- The first public key for authentication
 
-4. **Support for Key-Pair Rotation:**
-   - To adhere to best practices in security, the script creates two RSA key pairs for each Snowflake user. This approach supports seamless key rotation, allowing one key to be replaced while the other remains active.
-   - The decision to generate only two key pairs aligns with Snowflake's current limitation, which allows associating a maximum of two RSA public keys per user.  This ensures compliance with Snowflake's capabilities while maintaining robust security protocols.
+- `ACCOUNTADMIN`, `SECURITYADMIN`, and `SYSADMIN` role grants:
+    Role|Description
+    -|-
+    `ACCOUNTADMIN`|The `ACCOUNTADMIN` role in Snowflake is the highest-level administrative role within a Snowflake account. It has full control over all objects, resources, and configurations within the account. This role is responsible for managing all aspects of the Snowflake environment, including user access, resource allocation, and security settings.
+    `SECURITYADMIN`|The `SECURITYADMIN` role in Snowflake is a built-in system role designed to manage security-related tasks, primarily concerning user and role management. The `SECURITYADMIN` role has elevated privileges that allow it to control access within a Snowflake account, making it one of the key roles for maintaining the security posture of a Snowflake environment.
+    `SYSADMIN`|The `SYSADMIN` role in Snowflake is one of the predefined system roles that comes with a broad set of administrative privileges. It is designed to provide comprehensive control over most Snowflake resources, such as databases, schemas, warehouses, and other objects within an account. The `SYSADMIN` role is typically used for database administrators who manage the creation and configuration of Snowflake resources and control access to them.
 
-5. **Support for all the Snowflake clients:**
-   - Click [here](https://docs.snowflake.com/en/user-guide/key-pair-auth#supported-snowflake-clients) for a list of supported Snowflake clients.
+- `SERVICE` account type designation.
 
-This script automates the creation of Snowflake admin users with RSA key pair authentication. It generates two RSA key pairs for each user, ensuring a secure and efficient authentication method. The script also manages the storage of these keys in AWS Secrets Manager, making it easier to handle sensitive information.  Below is a sequential diagram of the workflow:
+3. Stores credentials in AWS Secrets Manager including:
+- Snowflake account identifiers (full identifier, organization name, account name)
+- Service username
+- Both RSA key pairs (public and private)
+- Active key indicator (for key rotation)
 
-![snowflake-rsa-key-authentication-workflow](./.blog/images/snowflake-rsa-key-authentication-workflow.png)
+4. Cleans up temporary key files from disk
 
-### **2.1 Script Sequence Diagram**
+#### **2.1.2 Delete Mode**
+When run in `delete` mode, the script performs the following actions:
+1. Removes the Snowflake service user created in `create` mode.
+2. Deletes the associated RSA key pairs from the file system.
+3. Removes the credentials stored in AWS Secrets Manager.
+
+### **2.2 Script Sequence Diagram**
 ```mermaid
 sequenceDiagram
     participant Script as Bash Script
@@ -172,3 +237,4 @@ sequenceDiagram
 
 ## **3.0 Resources**
 - [Snowflake Configuring key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication)
+- [Supported Snowflake Clients](https://docs.snowflake.com/en/user-guide/key-pair-auth#supported-snowflake-clients)
