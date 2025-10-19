@@ -180,7 +180,7 @@ then
     snow sql -q "GRANT ROLE SYSADMIN TO USER ${new_admin_service_user};" --temporary-connection --role ACCOUNTADMIN
 
     # Create or Update the AWS Secret
-    aws secretsmanager create-secret --name "$secrets_root_path" --secret-string "{\"snowflake_account_identifier\":\"$snowflake_account_identifier\",\"snowflake_organization_name\":\"${snowflake_account_identifier%-*}\",\"snowflake_account_name\":\"${snowflake_account_identifier#*-}\",\"new_admin_service_user\":\"$new_admin_service_user\",\"active_key_number\":1,\"snowflake_rsa_public_key_1_pem\":\"`cat public_key_1.pub`\",\"snowflake_rsa_public_key_2_pem\":\"`cat public_key_2.pub`\",\"snowflake_rsa_private_key_1_pem\":\"`cat private_key_1.b64`\",\"snowflake_rsa_private_key_2_pem\":\"`cat private_key_2.b64`\"}"
+    aws secretsmanager create-secret --name "$secrets_root_path" --secret-string "{\"snowflake_account_identifier\":\"$snowflake_account_identifier\",\"snowflake_organization_name\":\"${snowflake_account_identifier%-*}\",\"snowflake_account_name\":\"${snowflake_account_identifier#*-}\",\"admin_service_user\":\"$new_admin_service_user\",\"active_key_number\":1,\"snowflake_rsa_public_key_1_pem\":\"`cat public_key_1.pub`\",\"snowflake_rsa_public_key_2_pem\":\"`cat public_key_2.pub`\",\"snowflake_rsa_private_key_1_pem\":\"`cat private_key_1.b64`\",\"snowflake_rsa_private_key_2_pem\":\"`cat private_key_2.b64`\"}"
 
     # Remove the RSA key pairs
     rm private_key_1.p8
