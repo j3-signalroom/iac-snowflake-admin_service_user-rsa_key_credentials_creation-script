@@ -9,6 +9,7 @@ The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), 
 - Issue [#70](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/70)
 - Issue [#71](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/71)
 - Issue [#72](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/72)
+- Issue [#75](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/75)
 
 ## [1.00.00.000] - 2025-09-03
 ### Added
