@@ -1,5 +1,5 @@
-# IaC Snowflake Admin User RSA Key Credentials Creation Script
-This script greatly enhances the efficiency and security of an enterprise's operations. It aims to simplify the process of creating Snowflake admin users who use RSA key pair authentication. These admin users will eventually be responsible for creating Snowflake User or Service Accounts.  **Especially since as of November 2025, Snowflake announced in 2024 that it will [block single-factor password authentication](https://www.snowflake.com/en/blog/blocking-single-factor-password-authentification/) for user and service accounts!**
+# IaC Snowflake Admin Service User RSA Key Credentials Creation Script
+This script greatly enhances the efficiency and security of an enterprise's operations. It aims to simplify the process of creating Snowflake admin service users who use RSA key pair authentication. These admin service users will eventually be responsible for creating Snowflake User or Service Accounts.  **Especially since as of November 2025, Snowflake announced in 2024 that it will [block single-factor password authentication](https://www.snowflake.com/en/blog/blocking-single-factor-password-authentification/) for user and service accounts!**
 
 ![holy-shit-shocked](.blog/images/holy-shit-shocked.gif)
 
@@ -10,7 +10,7 @@ So, I am glad you are reading this!  😉  Below is a list of the key benefits o
    - This automation streamlines the authentication process, reducing setup time and potential errors, thereby enabling faster and more reliable deployment of Snowflake services.
 
 2. **Minimal required permissions:**
-   - The script grants the smallest set of privileges that the admin user needs to perform its required actions. This approach is part of the principle of *least privilege*, a security best practice that minimizes the potential for unauthorized access or accidental modifications by limiting permissions to only what is necessary.  Below is the list of roles that will be granted to the admin user:
+   - The script grants the smallest set of privileges that the admin service user needs to perform its required actions. This approach is part of the principle of *least privilege*, a security best practice that minimizes the potential for unauthorized access or accidental modifications by limiting permissions to only what is necessary.  Below is the list of roles that will be granted to the admin service user:
 
       Role|Description
       -|-
@@ -35,11 +35,12 @@ So, I am glad you are reading this!  😉  Below is a list of the key benefits o
 + [**1.0 Let's get started!**](#10-lets-get-started)
     - [**1.1 Snowflake**](#11-snowflake)
     - [**1.2 AWS Secrets Manager Secrets**](#12-aws-secrets-manager-secrets)
-+ [**2.0 Summary**](#20-summary)
-+ [**Resources**](#resources)
++ [**2.0 How the Script Works**](#20-how-the-script-works)
+    - [**2.1 Script Sequence Diagram**](#21-script-sequence-diagram)
++ [**3.0 Resources**](#resources)
 <!-- tocstop -->
 
-## 1.0 Let's get started!
+## **1.0 Let's get started!**
 
 1. Take care of the cloud and local environment prequisities listed below:
     > You need to have the following cloud accounts:
@@ -53,38 +54,38 @@ So, I am glad you are reading this!  😉  Below is a list of the key benefits o
 
 2. Clone the repo:
     ```shell
-    git clone https://github.com/j3-signalroom/snowflake_admin_user_rsa_key_credentials_creation_script.git
+    git clone https://github.com/j3-signalroom/iac-snowflake-admin_service_user-rsa_key_credentials_creation-script.git
     ```
 
-3. From the root folder of the `snowflake_admin_user_rsa_key_credentials_creation_script/` repository that you cloned, run the script in your Terminal to create the Snowflake user:
+3. From the root folder of the `iac-snowflake-admin_service_user-rsa_key_credentials_creation-script/` repository that you cloned, run the script in your Terminal to create the Snowflake service user:
     ```shell
-    ./create-store-snowflake-admin-user-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
-                                                                         --account_identifier=<ACCOUNT_IDENTIFIER> \
-                                                                         --snowflake_user=<SNOWFLAKE_USER> \
-                                                                         --snowflake_password=<SNOWFLAKE_PASSWORD> \
-                                                                         --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
-                                                                         --secrets_root_path=<SECRETS_ROOT_PATH> \
-                                                                         --new_admin_user=<NEW_ADMIN_USER>
+    ./provision-snowflake-admin-credentials.sh <create | delete> --profile=<SSO_PROFILE_NAME> \
+                                                                 --account_identifier=<ACCOUNT_IDENTIFIER> \
+                                                                 --snowflake_admin_user=<SNOWFLAKE_ADMIN_USER> \
+                                                                 --snowflake_password=<SNOWFLAKE_PASSWORD> \
+                                                                 --snowflake_warehouse=<SNOWFLAKE_WAREHOUSE> \
+                                                                 --secrets_root_path=<SECRETS_ROOT_PATH> \
+                                                                 --new_admin_service_user=<NEW_ADMIN_SERVICE_USER>
     ```
     Argument placeholder|Replace with
     -|-
     `<SSO_PROFILE_NAME>`|your AWS SSO profile name for your AWS infrastructue that houses your AWS Secrets Manager.
     `<ACCOUNT_IDENTIFIER>`|your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
-    `<SNOWFLAKE_USER>`|your Snowflake username that has been granted `ACCOUNTADMIN` privileges.
-    `<SNOWFLAKE_PASSWORD>`|your Snowflake password of the `<SNOWFLAKE_USER>`.
+    `<SNOWFLAKE_ADMIN_USER>`|your Snowflake username that has been granted `ACCOUNTADMIN` privileges.
+    `<SNOWFLAKE_PASSWORD>`|your Snowflake password of the `<SNOWFLAKE_ADMIN_USER>`.
     `<SNOWFLAKE_WAREHOUSE>`|your Snowflake warehouse is the virtual cluster of compute resources that provides CPU, memory, and temporary storage to perform DML (Data Management Language) operations.
     `<SECRETS_ROOT_PATH>`|the root path in AWS Secrets Manager where the secrets will be stored.
-    `<NEW_ADMIN_USER>`|the name of the new Snowflake ACCOUNTADMIN user to be created or updated.
+    `<NEW_ADMIN_SERVICE_USER>`|the name of the new Snowflake ACCOUNTADMIN service user to be created or updated.
 
 
 After the script successfully runs it creates the following in Snowflake and the AWS Secrets Manager for you:
 
-### 1.1 Snowflake
-Below is a picture of an example Snowflake admin user created with the `ACCOUNTADMIN` role granted by the script:
+### **1.1 Snowflake**
+Below is a picture of an example Snowflake admin service user created with the `ACCOUNTADMIN` role granted by the script:
 
-![admin-svc-user-detail-view-screenshot](.blog/images/admin-user-detail-view-screenshot.png)
+![admin-service-user-detail-view-screenshot](.blog/images/admin-service-user-detail-view-screenshot.png)
 
-### 1.2 AWS Secrets Manager Secrets
+### **1.2 AWS Secrets Manager Secrets**
 Here is the list of secrets generated by the Terraform script:
 
 > Key|Description
@@ -92,17 +93,84 @@ Here is the list of secrets generated by the Terraform script:
 > `snowflake_account_identifier`|Your organization's [Snowflake account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 > `snowflake_organization_name`|The name of your Snowflake organization, which is the part of the account identifier before the hyphen.
 > `snowflake_account_name`|The name of your Snowflake account, which is the part of the account identifier after the hyphen.
-> `new_admin_user`|The name of the new Snowflake admin user to create and manage future Snowflake resources.
+> `new_admin_service_user`|The name of the new Snowflake admin user to create and manage future Snowflake resources.
 > `active_key_number`|The current active RSA public key number.
-> `snowflake_rsa_public_key_1_pem`|The `new_admin_user` Snowflake RSA Public Key 1 PEM, which is encoded in **base64**.
-> `snowflake_rsa_public_key_2_pem`|The `new_admin_user` Snowflake RSA Public Key 2 PEM, which is encoded in **base64**.
-> `snowflake_rsa_private_key_1_pem`|The `new_admin_user` Snowflake RSA Private Key 1 PEM, which is encoded in **base64**.
-> `snowflake_rsa_private_key_2_pem`|The `new_admin_user` Snowflake RSA Private Key 2 PEM, which is encoded in **base64**.
+> `snowflake_rsa_public_key_1_pem`|The `new_admin_service_user` Snowflake RSA Public Key 1 PEM, which is encoded in **base64**.
+> `snowflake_rsa_public_key_2_pem`|The `new_admin_service_user` Snowflake RSA Public Key 2 PEM, which is encoded in **base64**.
+> `snowflake_rsa_private_key_1_pem`|The `new_admin_service_user` Snowflake RSA Private Key 1 PEM, which is encoded in **base64**.
+> `snowflake_rsa_private_key_2_pem`|The `new_admin_service_user` Snowflake RSA Private Key 2 PEM, which is encoded in **base64**.
 
-## 2.0 Summary 
+## **2.0 How the Script Works**
 This script automates the creation of Snowflake admin users with RSA key pair authentication. It generates two RSA key pairs for each user, ensuring a secure and efficient authentication method. The script also manages the storage of these keys in AWS Secrets Manager, making it easier to handle sensitive information.  Below is a sequential diagram of the workflow:
 
 ![snowflake-rsa-key-authentication-workflow](./.blog/images/snowflake-rsa-key-authentication-workflow.png)
 
-## Resources
+### **2.1 Script Sequence Diagram**
+```mermaid
+sequenceDiagram
+    participant Script as Bash Script
+    participant OpenSSL as OpenSSL
+    participant FS as File System
+    participant Snow as Snowflake CLI
+    participant AWS as AWS Secrets Manager
+
+    Note over Script: RSA Key Pair 1 Generation
+    Script->>OpenSSL: genrsa 2048
+    OpenSSL-->>Script: RSA private key (raw)
+    Script->>OpenSSL: pkcs8 -topk8 -inform PEM -nocrypt
+    OpenSSL->>FS: private_key_1.p8
+    
+    Script->>OpenSSL: rsa -pubout -outform DER
+    OpenSSL-->>Script: Public key (DER format)
+    Script->>OpenSSL: base64 -A
+    OpenSSL->>FS: public_key_1.pub
+    
+    Script->>OpenSSL: base64 -A (private key)
+    OpenSSL->>FS: private_key_1.b64
+
+    Note over Script: RSA Key Pair 2 Generation
+    Script->>OpenSSL: genrsa 2048
+    OpenSSL-->>Script: RSA private key (raw)
+    Script->>OpenSSL: pkcs8 -topk8 -inform PEM -nocrypt
+    OpenSSL->>FS: private_key_2.p8
+    
+    Script->>OpenSSL: rsa -pubout -outform DER
+    OpenSSL-->>Script: Public key (DER format)
+    Script->>OpenSSL: base64 -A
+    OpenSSL->>FS: public_key_2.pub
+    
+    Script->>OpenSSL: base64 -A (private key)
+    OpenSSL->>FS: private_key_2.b64
+
+    Note over Script: Snowflake Service User Creation
+    Script->>FS: cat public_key_1.pub
+    FS-->>Script: Public key content
+    Script->>Snow: CREATE USER TYPE=SERVICE with RSA_PUBLIC_KEY
+    Snow-->>Script: Service User created successfully
+    
+    Script->>Snow: GRANT ROLE ACCOUNTADMIN
+    Snow-->>Script: Role granted
+    
+    Script->>Snow: GRANT ROLE SECURITYADMIN
+    Snow-->>Script: Role granted
+    
+    Script->>Snow: GRANT ROLE SYSADMIN
+    Snow-->>Script: Role granted
+
+    Note over Script: AWS Secret Creation
+    Script->>FS: cat public_key_1.pub
+    FS-->>Script: Public key 1 content
+    Script->>FS: cat public_key_2.pub
+    FS-->>Script: Public key 2 content
+    Script->>FS: cat private_key_1.b64
+    FS-->>Script: Private key 1 content
+    Script->>FS: cat private_key_2.b64
+    FS-->>Script: Private key 2 content
+    
+    Script->>AWS: create-secret with JSON payload
+    Note right of AWS: Secret contains:<br/>- Account info<br/>- User info<br/>- Both public keys<br/>- Both private keys<br/>- Active key: 1
+    AWS-->>Script: Secret created successfully
+```
+
+## **3.0 Resources**
 - [Snowflake Configuring key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication)

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.01.00.000] - 2025-10-19
+### Changed
+- Issue [#71](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/71)
+
 ## [1.00.00.000] - 2025-09-03
 ### Added
 - Issue [#63](https://github.com/j3-signalroom/snowflake_admin_service_account_user/issues/63)
@@ -40,7 +44,7 @@ The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), 
 ## [0.04.00.000] - 2024-08-24
 ### Added
 - Describe the script execution in detail.
-- Added to the script the `--tf_snowflake_user` argument.
+- Added to the script the `--tf_snowflake_admin_user` argument.
 
 ## [0.03.00.000] - 2024-08-24
 ### Added
